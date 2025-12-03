@@ -192,7 +192,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions, suggestions, or discussions about ethical AI:
 - Open an issue on GitHub
-- Contact: [your-email@example.com]
+- Contact: bissembert (a) gmail.com
 
 ## Disclaimer
 
