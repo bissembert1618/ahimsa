@@ -1,0 +1,17 @@
+# Core framework has no external dependencies
+# Uses only Python standard library
+
+# Optional dependencies for AI model integrations:
+
+# For OpenAI integration (optional)
+# openai>=1.0.0
+
+# For Anthropic Claude integration (optional)
+# anthropic>=0.18.0
+
+# For development and testing (optional)
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+# black>=23.0.0
+# flake8>=6.0.0
+# mypy>=1.0.0
