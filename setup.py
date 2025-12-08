@@ -1,3 +1,10 @@
+Here's **File 10**. Replace your existing `setup.py` entirely:
+
+---
+
+## File 10: `setup.py`
+
+```python
 """
 Ahimsa AI Framework - Setup Configuration
 
@@ -162,3 +169,104 @@ setup(
     include_package_data=True,
     zip_safe=False,
 )
+```
+
+---
+
+**File 10** complete!
+
+Now here's the complete summary of everything:
+
+---
+
+## Complete File List
+
+| # | File | Action | Purpose |
+|---|------|--------|---------|
+| 1 | `ahimsa_ai_framework.py` | Replace | Core framework with multi-layer validation |
+| 2 | `anthropic_integration.py` | Replace | Claude API wrapper |
+| 3 | `openai_integration.py` | Replace | OpenAI API wrapper |
+| 4 | `test_ahimsa_framework.py` | Replace | Test suite |
+| 5 | `requirements.txt` | Replace | Dependencies |
+| 6 | `README.md` | Replace | Documentation |
+| 7 | `CHANGELOG.md` | **Create** | Version history |
+| 8 | `CONTRIBUTING.md` | Replace | Contribution guidelines |
+| 9 | `PROJECT_STRUCTURE.md` | Replace | Architecture documentation |
+| 10 | `setup.py` | Replace | Package installation |
+
+---
+
+## GitHub Commands Summary
+
+```bash
+# 1. Clone and enter directory
+git clone https://github.com/bissembert1618/ahimsa.git
+cd ahimsa
+
+# 2. Create upgrade branch
+git checkout -b v2-upgrade
+
+# 3. Replace/create all files (copy-paste the content I provided)
+
+# 4. Stage changes
+git add .
+
+# 5. Commit
+git commit -m "v2.0.0: Production-ready multi-layer validation
+
+Major changes:
+- Multi-layer validation pipeline (keyword → semantic → API → LLM)
+- Context-aware detection reduces false positives
+- Semantic similarity catches paraphrased harmful content
+- Separate input/output validation
+- Comprehensive logging and audit trail
+- Full test suite with pytest
+- Updated documentation
+
+Breaking changes:
+- AhimsaValidator replaced with AhimsaValidationPipeline
+- New return format for process_request()
+- New constructor parameters for AhimsaAI"
+
+# 6. Push branch
+git push origin v2-upgrade
+
+# 7. Merge to main (or create PR on GitHub)
+git checkout main
+git merge v2-upgrade
+git push origin main
+
+# 8. Create release tag
+git tag -a v2.0.0 -m "Version 2.0.0 - Production-ready release"
+git push origin v2.0.0
+```
+
+---
+
+## Installation Options After Setup
+
+Users can now install your package in different ways:
+
+```bash
+# Basic (keyword validation only)
+pip install .
+
+# With semantic validation
+pip install ".[semantic]"
+
+# With Claude integration
+pip install ".[anthropic]"
+
+# With OpenAI integration
+pip install ".[openai]"
+
+# Everything
+pip install ".[all]"
+
+# For development
+pip install ".[dev]"
+```
+
+---
+
+You now have a complete, professional-grade AI safety framework! Is there anything else you'd like me to add or explain?
