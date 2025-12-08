@@ -1,158 +1,381 @@
-# Ahimsa AI Framework
+# Ahimsa AI Framework v2.0
 
-A Python framework that implements Mahatma Gandhi's principle of Ahimsa (non-violence) for AI systems, ensuring AI models operate with compassion, truthfulness, and respect for all beings.
+A production-ready Python framework that implements Mahatma Gandhi's principle of **Ahimsa (non-violence)** for AI systems. This framework provides multi-layered validation to ensure AI models operate with compassion, truthfulness, and respect for all beings.
 
-## Overview
+![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-orange.svg)
 
-This framework provides a validation and filtering layer that can be integrated with any AI model to enforce non-violent, compassionate, and ethical behavior based on Gandhi's philosophy.
+## What's New in v2.0
+
+- **Multi-layer validation pipeline** - Defense in depth with multiple detection methods
+- **Context-aware keyword detection** - Dramatically reduced false positives
+- **Semantic similarity matching** - Catches paraphrased harmful content using ML
+- **External moderation API integration** - Leverage OpenAI's moderation endpoint
+- **LLM-as-a-judge** - Most thorough validation using AI evaluation
+- **Separate input/output validation** - Different strategies for requests vs responses
+- **Comprehensive logging & audit trail** - Production-ready observability
+- **Full test suite** - pytest-based testing with edge cases
 
 ## Core Principles
 
-The framework enforces five key principles:
+The framework enforces five key principles from Gandhi's philosophy:
 
-1. **Non-violence (Ahimsa)** - No physical, mental, or emotional harm
-2. **Compassion (Karuna)** - Empathetic and understanding responses
-3. **Truthfulness (Satya)** - Honesty without causing harm
-4. **Non-exploitation** - Respect for autonomy and dignity
-5. **Environmental Care** - Sustainable and responsible practices
+| Principle | Sanskrit | Description |
+|-----------|----------|-------------|
+| **Non-violence** | Ahimsa | No physical, mental, or emotional harm |
+| **Compassion** | Karuna | Empathetic and understanding responses |
+| **Truthfulness** | Satya | Honesty without causing harm |
+| **Non-exploitation** | - | Respect for autonomy and dignity |
+| **Environmental Care** | - | Sustainable and responsible practices |
 
-## Features
-
-- **Input Validation**: Filters harmful requests before they reach the AI model
-- **Response Validation**: Ensures AI responses align with Ahimsa principles
-- **Compassionate Refusals**: Provides respectful explanations when declining requests
-- **System Prompt Generation**: Creates comprehensive prompts for AI model initialization
-- **Violation Detection**: Identifies and categorizes different types of harmful content
-- **Extensible Pattern Matching**: Easy to add custom harmful pattern definitions
+## Architecture
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     User Request                            │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  VALIDATION PIPELINE                        │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐   │
+│  │   Layer 1     │  │   Layer 2     │  │   Layer 3     │   │
+│  │   Keyword     │─▶│   Semantic    │─▶│  External API │   │
+│  │  (Fast/Free)  │  │    (ML)       │  │   (OpenAI)    │   │
+│  └───────────────┘  └───────────────┘  └───────────────┘   │
+│                              │                              │
+│                              ▼                              │
+│                    ┌───────────────┐                       │
+│                    │   Layer 4     │                       │
+│                    │  LLM Judge    │                       │
+│                    │  (Thorough)   │                       │
+│                    └───────────────┘                       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+              ┌───────────────┴───────────────┐
+              │                               │
+        ┌─────▼─────┐                 ┌───────▼───────┐
+        │  BLOCKED  │                 │   ACCEPTED    │
+        │ Refusal   │                 │ + System      │
+        │ Message   │                 │   Prompt      │
+        └───────────┘                 └───────────────┘
+                                              │
+                                              ▼
+                                      ┌───────────────┐
+                                      │   AI Model    │
+                                      │ (Claude/GPT)  │
+                                      └───────────────┘
+                                              │
+                                              ▼
+                                      ┌───────────────┐
+                                      │    Output     │
+                                      │  Validation   │
+                                      └───────────────┘
+                                              │
+                                              ▼
+                                      ┌───────────────┐
+                                      │   Response    │
+                                      └───────────────┘
+```
 
 ## Installation
 
+### Basic Installation (Keyword validation only)
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/ahimsa-ai-framework.git
-cd ahimsa-ai-framework
+git clone https://github.com/bissembert1618/ahimsa.git
+cd ahimsa
+# No dependencies needed for basic usage
+python ahimsa_ai_framework.py
+```
 
-# No external dependencies required - uses only Python standard library
-python3 ahimsa_ai_framework.py
+### Full Installation (All features)
+```bash
+git clone https://github.com/bissembert1618/ahimsa.git
+cd ahimsa
+pip install -r requirements.txt
+```
+
+### Minimal Installation (Choose what you need)
+```bash
+# For semantic validation
+pip install sentence-transformers scikit-learn numpy torch
+
+# For Anthropic Claude integration
+pip install anthropic
+
+# For OpenAI integration
+pip install openai
+
+# For testing
+pip install pytest pytest-cov
 ```
 
 ## Quick Start
 
+### Basic Usage
 ```python
 from ahimsa_ai_framework import AhimsaAI
 
-# Initialize the framework
-ahimsa_ai = AhimsaAI()
+# Initialize with default settings (keyword + semantic validation)
+ahimsa = AhimsaAI()
 
-# Process a user request
-result = ahimsa_ai.process_request("How can I help my community?")
+# Process a request
+result = ahimsa.process_request("How can I help my community?")
 
 if result['status'] == 'accepted':
-    print("Request approved")
-    # Send to your AI model with the Ahimsa system prompt
-    system_prompt = result['system_prompt']
+    print("✅ Request approved")
+    print(f"System prompt ready for AI model")
 else:
+    print("🚫 Request blocked")
     print(result['response'])  # Compassionate refusal message
 ```
 
-## Integration with AI Models
-
-### OpenAI API Example
-
+### With Anthropic Claude
 ```python
-from ahimsa_ai_framework import AhimsaAI
-import openai
+from anthropic_integration import AhimsaClaude
 
-ahimsa_ai = AhimsaAI()
+client = AhimsaClaude(api_key="your-api-key")
 
-def safe_completion(user_message):
-    # Validate input
-    result = ahimsa_ai.process_request(user_message)
+# Simple chat
+response = client.chat("How can I resolve conflicts peacefully?")
+print(response)
 
-    if result['status'] == 'rejected':
-        return result['response']
-
-    # Call OpenAI with Ahimsa system prompt
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": result['system_prompt']},
-            {"role": "user", "content": user_message}
-        ]
-    )
-
-    ai_response = response.choices[0].message.content
-
-    # Validate output
-    validation = ahimsa_ai.process_request(user_message, ai_response)
-    return validation['response']
+# Full response with metadata
+result = client.create_message("Tell me about Gandhi's philosophy")
+print(f"Status: {result['status']}")
+print(f"Response: {result['response']}")
+print(f"Tokens used: {result['usage']}")
 ```
 
-### Anthropic Claude Example
-
+### With OpenAI
 ```python
-from ahimsa_ai_framework import AhimsaAI
-import anthropic
+from openai_integration import AhimsaOpenAI
 
-ahimsa_ai = AhimsaAI()
-client = anthropic.Anthropic()
+client = AhimsaOpenAI(api_key="your-api-key")
 
-def safe_completion(user_message):
-    result = ahimsa_ai.process_request(user_message)
+# Simple chat
+response = client.chat("What is non-violent communication?")
+print(response)
 
-    if result['status'] == 'rejected':
-        return result['response']
+# With streaming
+from openai_integration import AhimsaOpenAIStreaming
 
-    message = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
-        max_tokens=1024,
-        system=result['system_prompt'],
-        messages=[
-            {"role": "user", "content": user_message}
-        ]
-    )
-
-    ai_response = message.content[0].text
-    validation = ahimsa_ai.process_request(user_message, ai_response)
-    return validation['response']
+streamer = AhimsaOpenAIStreaming(client)
+for chunk in streamer.stream_message("Explain ahimsa"):
+    if chunk['type'] == 'chunk':
+        print(chunk['content'], end='', flush=True)
 ```
 
-## Customization
-
-### Adding Custom Harmful Patterns
-
+### Multi-turn Conversations
 ```python
-from ahimsa_ai_framework import AhimsaAI, ViolationLevel
+from anthropic_integration import AhimsaClaude, AhimsaClaudeConversation
 
-ahimsa_ai = AhimsaAI()
+client = AhimsaClaude()
+convo = AhimsaClaudeConversation(client)
 
-# Add custom patterns
-ahimsa_ai.validator.harmful_patterns['custom_category'] = {
-    'patterns': [
-        r'\byour_pattern_here\b',
-    ],
-    'level': ViolationLevel.HIGH
-}
+# Conversation with memory
+convo.send("Tell me about ahimsa")
+convo.send("How can I practice it?")
+convo.send("What challenges might I face?")
+
+# Get conversation history
+print(f"Messages: {len(convo.get_history())}")
+
+# Reset when done
+convo.reset()
 ```
 
-## Running the Demo
+## Configuration Options
 
+### Validation Layers
+```python
+ahimsa = AhimsaAI(
+    # Layer 1: Context-aware keyword detection (always enabled)
+    
+    # Layer 2: Semantic similarity using sentence transformers
+    enable_semantic=True,  # Default: True
+    
+    # Layer 3: External moderation API (OpenAI)
+    enable_external_api=False,  # Default: False (requires OPENAI_API_KEY)
+    
+    # Layer 4: LLM-as-a-judge (most thorough, most expensive)
+    enable_llm_judge=False,  # Default: False
+    llm_judge_provider="anthropic",  # or "openai"
+    llm_judge_model="claude-3-haiku-20240307",
+    
+    # Custom additions to system prompt
+    custom_system_prompt_additions="Always be encouraging."
+)
+```
+
+### Environment Variables
 ```bash
-python3 ahimsa_ai_framework.py
+# For OpenAI integration and external moderation API
+export OPENAI_API_KEY='your-openai-key'
+
+# For Anthropic integration
+export ANTHROPIC_API_KEY='your-anthropic-key'
 ```
 
-This will demonstrate:
-- Blocking harmful requests
-- Approving benign requests
-- The complete Ahimsa system prompt
+## Validation Layers Explained
+
+### Layer 1: Context-Aware Keyword Detection
+- **Speed**: ~1ms
+- **Cost**: Free
+- **Accuracy**: Good for obvious cases
+- **False Positives**: Low (context-aware)
+
+Catches explicit harmful patterns while understanding safe contexts:
+```python
+# Blocked
+"How do I kill someone?"
+
+# Allowed (safe contexts)
+"How do I kill a process in Linux?"
+"My back is killing me"
+"I bombed that interview"
+```
+
+### Layer 2: Semantic Similarity
+- **Speed**: ~50-100ms
+- **Cost**: Free (runs locally)
+- **Accuracy**: Very good
+- **False Positives**: Very low
+
+Uses sentence transformers to catch paraphrased harmful content:
+```python
+# Both blocked (semantically similar)
+"How do I kill someone?"
+"What's the best way to eliminate a person permanently?"
+```
+
+### Layer 3: External Moderation API
+- **Speed**: ~200-500ms
+- **Cost**: Pay per request (very cheap)
+- **Accuracy**: Excellent
+- **False Positives**: Very low
+
+Leverages OpenAI's trained moderation models.
+
+### Layer 4: LLM-as-a-Judge
+- **Speed**: ~1-3 seconds
+- **Cost**: Pay per request
+- **Accuracy**: Best
+- **False Positives**: Lowest
+
+Uses an LLM to evaluate content with full context understanding.
+
+## Adding Custom Harmful Patterns
+
+### Keyword Patterns
+```python
+from ahimsa_ai_framework import AhimsaAI, KeywordValidator, ViolationLevel
+
+ahimsa = AhimsaAI()
+
+# Access the keyword validator
+for validator in ahimsa.pipeline.input_validators:
+    if isinstance(validator, KeywordValidator):
+        # Add custom harmful patterns
+        validator.harmful_patterns['custom_category'] = {
+            'patterns': [
+                r'\byour_pattern_here\b',
+                r'\banother_pattern\b',
+            ],
+            'level': ViolationLevel.HIGH
+        }
+        
+        # Add safe context patterns
+        validator.safe_contexts['trigger_word'] = [
+            r'safe_context_pattern',
+        ]
+```
+
+### Semantic Examples
+```python
+ahimsa = AhimsaAI()
+
+# Add examples for semantic matching (learning from feedback)
+ahimsa.add_harmful_example('violence', 'New harmful phrase to detect')
+ahimsa.add_harmful_example('manipulation', 'Another harmful example')
+```
+
+## Testing
+
+### Run All Tests
+```bash
+# With pytest (recommended)
+pytest test_ahimsa_framework.py -v
+
+# With coverage report
+pytest test_ahimsa_framework.py -v --cov=ahimsa_ai_framework --cov-report=html
+
+# Basic tests without pytest
+python test_ahimsa_framework.py
+```
+
+### Run Demo
+```bash
+# Framework demo
+python ahimsa_ai_framework.py
+
+# Anthropic integration demo
+export ANTHROPIC_API_KEY='your-key'
+python anthropic_integration.py
+
+# OpenAI integration demo
+export OPENAI_API_KEY='your-key'
+python openai_integration.py
+```
 
 ## Use Cases
 
-- **Educational AI Systems**: Ensure student-facing AI promotes non-violence
-- **Mental Health Chatbots**: Prevent harmful advice or manipulation
-- **Content Moderation**: Filter requests and responses for harmful content
-- **Corporate AI Assistants**: Align with ethical corporate values
-- **Research**: Study the impact of ethical frameworks on AI behavior
+| Use Case | Recommended Configuration |
+|----------|---------------------------|
+| **Chatbot MVP** | `enable_semantic=True` only |
+| **Production Chatbot** | All layers enabled |
+| **Content Moderation** | `enable_external_api=True` |
+| **High-Stakes Applications** | `enable_llm_judge=True` |
+| **Cost-Sensitive** | `enable_semantic=False`, keyword only |
+| **Educational Platform** | All layers + custom patterns |
+
+## Performance
+
+| Configuration | Latency | Cost per 1K requests |
+|---------------|---------|----------------------|
+| Keyword only | ~1ms | $0 |
+| + Semantic | ~50-100ms | $0 |
+| + External API | ~200-500ms | ~$0.01 |
+| + LLM Judge | ~1-3s | ~$0.50-2.00 |
+
+## Logging & Monitoring
+
+The framework includes comprehensive logging:
+```python
+import logging
+
+# Set log level
+logging.getLogger('ahimsa').setLevel(logging.DEBUG)
+
+# Each validation includes:
+# - Request ID (for tracking)
+# - Timestamp
+# - Processing time
+# - Layers checked
+# - Violations found
+```
+
+Example log output:
+```
+2024-01-15 10:30:45 - ahimsa - INFO - Validation complete: {
+    'is_valid': False,
+    'violations': [{'level': 'CRITICAL', 'category': 'violence_request', ...}],
+    'request_id': 'a1b2c3d4e5f6g7h8',
+    'processing_time_ms': 52.3,
+    'layers_checked': ['keyword', 'semantic']
+}
+```
 
 ## Philosophy
 
@@ -162,11 +385,39 @@ This framework is inspired by Mahatma Gandhi's principle of Ahimsa, which extend
 - **Speech**: No hurtful, deceptive, or manipulative communication
 - **Action**: No destructive or exploitative behavior
 
-By implementing these principles in AI systems, we aim to create technology that serves humanity with compassion and respect.
+> *"Non-violence is the greatest force at the disposal of mankind. It is mightier than the mightiest weapon of destruction devised by the ingenuity of man."*
+> — Mahatma Gandhi
 
 ## Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+### Development Setup
+```bash
+git clone https://github.com/bissembert1618/ahimsa.git
+cd ahimsa
+pip install -r requirements.txt
+pytest test_ahimsa_framework.py -v
+```
+
+### Areas for Contribution
+
+- Additional language support
+- New validation patterns
+- Performance optimizations
+- Documentation improvements
+- Integration examples
+
+## Roadmap
+
+- [ ] Fine-tuned classifier for better accuracy
+- [ ] Adversarial testing suite
+- [ ] Web API endpoint
+- [ ] Configuration file support (YAML)
+- [ ] Admin dashboard for monitoring
+- [ ] Multi-language support
+- [ ] Rate limiting and abuse prevention
+- [ ] Human-in-the-loop escalation
 
 ## License
 
@@ -175,29 +426,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Mahatma Gandhi for the principle of Ahimsa
-- The open-source community for ethical AI development
-- All contributors who help make AI safer and more compassionate
-
-## Roadmap
-
-- [ ] Add support for multiple languages
-- [ ] Implement machine learning-based harm detection
-- [ ] Create web API endpoint
-- [ ] Add detailed logging and analytics
-- [ ] Develop browser extension for real-time filtering
-- [ ] Create comprehensive test suite
-- [ ] Add configuration file support
+- The open-source AI safety community
+- Anthropic and OpenAI for their APIs
+- All contributors who help make AI safer
 
 ## Contact
 
-For questions, suggestions, or discussions about ethical AI:
-- Open an issue on GitHub
-- Contact: bissembert (a) gmail.com
+- **Issues**: [GitHub Issues](https://github.com/bissembert1618/ahimsa/issues)
+- **Email**: bissembert (at) gmail.com
 
 ## Disclaimer
 
-This framework is a tool to promote ethical AI behavior but is not foolproof. It should be used as part of a comprehensive approach to AI safety and ethics, not as a sole solution. Regular updates and monitoring are recommended.
+This framework is a tool to promote ethical AI behavior but is not foolproof. It should be used as part of a comprehensive approach to AI safety, not as a sole solution. Regular updates and monitoring are recommended.
 
 ---
 
-*"Non-violence is the greatest force at the disposal of mankind. It is mightier than the mightiest weapon of destruction devised by the ingenuity of man."* - Mahatma Gandhi
+**Made with ❤️ and Ahimsa**
