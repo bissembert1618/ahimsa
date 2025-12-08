@@ -110,8 +110,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Release Date | Highlights |
 |---------|--------------|------------|
-| 2.0.0 | 2024-XX-XX | Multi-layer pipeline, semantic validation, production-ready |
-| 1.0.0 | 2024-XX-XX | Initial release, basic regex validation |
+| 2.0.0 | 2025-12-08 | Multi-layer pipeline, semantic validation, production-ready |
+| 1.0.0 | 2025-12-02 | Initial release, basic regex validation |
 
 ---
 
