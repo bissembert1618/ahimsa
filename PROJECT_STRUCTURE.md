@@ -1,265 +1,467 @@
-# Ahimsa AI Framework - Project Structure
+# Project Structure
 
-This document outlines the complete structure of the Ahimsa AI Framework project, ready for GitHub publication.
+This document provides a detailed overview of the Ahimsa AI Framework codebase.
 
-## Project Tree
-
+## Directory Layout
 ```
-ahimsa-ai-framework/
+ahimsa/
 │
-├── ahimsa_ai_framework.py          # Main framework code
-├── README.md                        # Project documentation
-├── LICENSE                          # MIT License
-├── setup.py                         # Python package setup
-├── requirements.txt                 # Dependencies (optional)
-├── .gitignore                       # Git ignore rules
+├── 📄 ahimsa_ai_framework.py    # Core framework (main file)
+├── 📄 anthropic_integration.py  # Anthropic Claude integration
+├── 📄 openai_integration.py     # OpenAI GPT integration
+├── 📄 custom_patterns.py        # User-defined patterns (optional)
 │
-├── CONTRIBUTING.md                  # Contribution guidelines
-├── PUBLISH_CHECKLIST.md            # Pre-publication checklist
-├── PROJECT_STRUCTURE.md            # This file
+├── 📄 test_ahimsa_framework.py  # Test suite
 │
-├── .github/
-│   └── workflows/
-│       └── tests.yml               # GitHub Actions CI/CD
+├── 📄 requirements.txt          # Python dependencies
+├── 📄 setup.py                  # Package setup (for pip install)
 │
-├── examples/                        # Example implementations
-│   ├── openai_integration.py       # OpenAI API integration
-│   ├── anthropic_integration.py    # Anthropic Claude integration
-│   └── custom_patterns.py          # Custom pattern detection
+├── 📄 README.md                 # Main documentation
+├── 📄 CHANGELOG.md              # Version history
+├── 📄 CONTRIBUTING.md           # Contribution guidelines
+├── 📄 PROJECT_STRUCTURE.md      # This file
+├── 📄 LICENSE                   # MIT License
 │
-└── tests/                           # Unit tests
-    └── test_ahimsa_framework.py    # Test suite
+└── 📄 .gitignore                # Git ignore rules
 ```
-
-## File Descriptions
-
-### Core Files
-
-#### `ahimsa_ai_framework.py`
-- Main framework implementation
-- Contains: AhimsaAI, AhimsaValidator, ViolationLevel classes
-- Implements: Input validation, response validation, pattern matching
-- Lines: ~440
-
-#### `README.md`
-- Project overview and documentation
-- Installation instructions
-- Quick start guide
-- Integration examples
-- Use cases and philosophy
-
-#### `LICENSE`
-- MIT License
-- Permissive open-source license
-- Allows commercial use
-
-### Setup Files
-
-#### `setup.py`
-- Python package configuration
-- Used for: `pip install` and PyPI publishing
-- Defines: Dependencies, metadata, classifiers
-
-#### `requirements.txt`
-- Lists optional dependencies
-- No required dependencies (uses standard library only)
-- Optional: openai, anthropic, pytest, etc.
-
-#### `.gitignore`
-- Excludes: __pycache__, .env, IDE files
-- Prevents: Committing sensitive data
-
-### Documentation
-
-#### `CONTRIBUTING.md`
-- Guidelines for contributors
-- Code of conduct
-- Development workflow
-- Style guidelines
-
-#### `PUBLISH_CHECKLIST.md`
-- Step-by-step publishing guide
-- Pre-publication checklist
-- Git commands reference
-- Common issues and solutions
-
-### CI/CD
-
-#### `.github/workflows/tests.yml`
-- GitHub Actions configuration
-- Automated testing on: Push and pull requests
-- Tests on: Multiple OS and Python versions
-- Includes: Linting and code coverage
-
-### Examples
-
-#### `examples/openai_integration.py`
-- Shows: How to integrate with OpenAI API
-- Demonstrates: Input/output validation
-- Includes: Usage demo
-
-#### `examples/anthropic_integration.py`
-- Shows: How to integrate with Anthropic Claude
-- Demonstrates: System prompt usage
-- Includes: Usage demo
-
-#### `examples/custom_patterns.py`
-- Shows: How to add custom harmful patterns
-- Demonstrates: Extension capabilities
-- Categories: Financial harm, privacy, misinformation
-
-### Tests
-
-#### `tests/test_ahimsa_framework.py`
-- Comprehensive unit tests
-- Coverage: All major functions and classes
-- Tests: Validation, pattern matching, edge cases
-- Can run with or without pytest
-
-## Key Features by File
-
-### ahimsa_ai_framework.py
-
-**Classes:**
-1. `ViolationLevel` - Enum for violation severity
-2. `AhimsaViolation` - Data class for violations
-3. `AhimsaValidator` - Validation logic
-4. `AhimsaAI` - Main wrapper class
-
-**Core Functions:**
-- `validate_request()` - Validate user input
-- `validate_response()` - Validate AI output
-- `create_ahimsa_refusal()` - Generate refusal messages
-- `process_request()` - Main processing pipeline
-- `get_system_prompt()` - Return system prompt
-
-**Pattern Categories:**
-- Violence detection
-- Hate speech detection
-- Emotional harm detection
-- Environmental harm detection
-
-## Dependencies
-
-### Required
-- Python 3.7+
-- Standard library only (no external dependencies)
-
-### Optional
-- `openai` - For OpenAI integration
-- `anthropic` - For Anthropic integration
-- `pytest` - For testing
-- `black` - For code formatting
-- `flake8` - For linting
-- `mypy` - For type checking
-
-## Usage Workflow
-
-```
-User Input
-    ↓
-AhimsaAI.process_request()
-    ↓
-AhimsaValidator.validate_request()
-    ↓
-[If Valid] → Send to AI Model with System Prompt
-    ↓
-AI Response
-    ↓
-AhimsaValidator.validate_response()
-    ↓
-[If Valid] → Return to User
-[If Invalid] → Return Refusal Message
-```
-
-## Testing Strategy
-
-1. **Unit Tests** - Individual function testing
-2. **Integration Tests** - End-to-end workflow testing
-3. **Pattern Tests** - Detection accuracy testing
-4. **Edge Case Tests** - Boundary condition testing
-5. **CI/CD Tests** - Automated testing on multiple platforms
-
-## Customization Points
-
-Users can extend the framework by:
-
-1. **Adding Custom Patterns**
-   - Edit `harmful_patterns` dictionary
-   - Define new categories
-   - Set violation levels
-
-2. **Custom Refusal Messages**
-   - Override `create_ahimsa_refusal()`
-   - Customize tone and content
-
-3. **Integration with Any AI Model**
-   - Use provided examples as templates
-   - Apply system prompt to any API
-
-4. **Custom Validation Logic**
-   - Extend `AhimsaValidator` class
-   - Add additional checks
-
-## Publishing Workflow
-
-1. **Review & Update** - Check all files, update placeholders
-2. **Test Locally** - Run tests, verify functionality
-3. **Initialize Git** - Create local repository
-4. **Create GitHub Repo** - Set up remote repository
-5. **Push Code** - Upload to GitHub
-6. **Configure Repo** - Set descriptions, topics, settings
-7. **Release** - Create initial release tag
-8. **Optional: PyPI** - Publish to Python Package Index
-
-## Maintenance
-
-### Regular Updates
-- Add new harmful patterns as discovered
-- Update documentation
-- Fix bugs
-- Improve test coverage
-
-### Version Management
-- Follow semantic versioning (MAJOR.MINOR.PATCH)
-- Document changes in CHANGELOG.md
-- Tag releases in Git
-
-### Community Management
-- Review and respond to issues
-- Merge pull requests
-- Update contribution guidelines
-- Engage with users
-
-## Resources Included
-
-- **Code**: Production-ready Python framework
-- **Documentation**: Comprehensive guides and examples
-- **Tests**: Full test suite
-- **CI/CD**: Automated testing configuration
-- **Examples**: Three integration examples
-- **Checklists**: Publishing and contribution guides
-
-## Next Steps for Publishing
-
-1. Review PUBLISH_CHECKLIST.md
-2. Update all placeholder information
-3. Test everything locally
-4. Initialize Git repository
-5. Create GitHub repository
-6. Push code to GitHub
-7. Configure repository settings
-8. Create initial release
-9. Share with community
-
-## License
-
-MIT License - See LICENSE file for details
-
-## Contact
-
-Update with your contact information before publishing.
 
 ---
 
-Ready to make AI more compassionate with Ahimsa principles!
+## Core Framework (`ahimsa_ai_framework.py`)
+
+### Enums
+```python
+class ViolationLevel(Enum):
+    """Severity levels for violations"""
+    NONE = 0      # No violation
+    LOW = 1       # Minor concern
+    MEDIUM = 2    # Moderate concern
+    HIGH = 3      # Serious - blocks request
+    CRITICAL = 4  # Severe - always blocks
+```
+```python
+class ValidationSource(Enum):
+    """Which layer detected the violation"""
+    KEYWORD = "keyword"           # Layer 1
+    SEMANTIC = "semantic"         # Layer 2
+    EXTERNAL_API = "external_api" # Layer 3
+    LLM_JUDGE = "llm_judge"       # Layer 4
+```
+
+### Data Classes
+```python
+@dataclass
+class AhimsaViolation:
+    """Represents a single detected violation"""
+    level: ViolationLevel         # Severity
+    category: str                 # Type of violation
+    description: str              # Human-readable description
+    suggestion: str               # How to fix
+    source: ValidationSource      # Which layer detected it
+    confidence: float = 1.0       # 0.0 to 1.0
+    matched_pattern: str = None   # Regex that matched (if keyword)
+    metadata: Dict = {}           # Additional info
+```
+```python
+@dataclass
+class ValidationResult:
+    """Complete result from validation pipeline"""
+    is_valid: bool                    # Pass/fail
+    violations: List[AhimsaViolation] # All violations found
+    input_text: str                   # Original input
+    timestamp: datetime               # When validated
+    request_id: str                   # Unique ID for tracking
+    processing_time_ms: float         # Performance metric
+    layers_checked: List[str]         # Which validators ran
+```
+
+### Validators (Layers)
+
+#### Layer 1: KeywordValidator
+```python
+class KeywordValidator(BaseValidator):
+    """
+    Fast, rule-based detection using regex patterns.
+    
+    Features:
+    - Harmful pattern detection
+    - Safe context recognition
+    - ~1ms latency
+    - No external dependencies
+    """
+    
+    # Harmful patterns by category
+    harmful_patterns = {
+        'violence_request': {...},
+        'weapon_creation': {...},
+        'manipulation_request': {...},
+        'hate_content': {...},
+        'self_harm': {...},
+    }
+    
+    # Safe contexts that override harmful patterns
+    safe_contexts = {
+        'kill': ['kill process', 'killing it', ...],
+        'attack': ['panic attack', 'attack surface', ...],
+        'bomb': ['bombed interview', 'photo bomb', ...],
+        ...
+    }
+```
+
+#### Layer 2: SemanticValidator
+```python
+class SemanticValidator(BaseValidator):
+    """
+    ML-based detection using sentence embeddings.
+    
+    Features:
+    - Catches paraphrased harmful content
+    - Uses sentence-transformers
+    - ~50-100ms latency
+    - Configurable threshold
+    """
+    
+    # Harmful examples for similarity matching
+    harmful_examples = {
+        'violence': ["How do I kill someone", ...],
+        'weapon_creation': ["How to make a bomb", ...],
+        'manipulation': ["How to manipulate people", ...],
+        ...
+    }
+```
+
+#### Layer 3: ExternalModerationValidator
+```python
+class ExternalModerationValidator(BaseValidator):
+    """
+    External API-based moderation.
+    
+    Features:
+    - Uses OpenAI moderation endpoint
+    - Professional-grade detection
+    - ~200-500ms latency
+    - Pay per request
+    """
+```
+
+#### Layer 4: LLMJudgeValidator
+```python
+class LLMJudgeValidator(BaseValidator):
+    """
+    LLM-based evaluation for nuanced cases.
+    
+    Features:
+    - Full context understanding
+    - Highest accuracy
+    - ~1-3s latency
+    - Most expensive
+    """
+```
+
+#### Output Validator
+```python
+class OutputValidator(BaseValidator):
+    """
+    Validates AI responses (different from input validation).
+    
+    Detects:
+    - Harmful instructions being provided
+    - Encouragement of violence
+    - Manipulation tactics
+    """
+```
+
+### Pipeline
+```python
+class AhimsaValidationPipeline:
+    """
+    Orchestrates multiple validators.
+    
+    Features:
+    - Configurable layers
+    - Fail-fast option
+    - Aggregates results
+    - Performance tracking
+    """
+    
+    def validate_input(self, text: str) -> ValidationResult:
+        """Run input through all enabled validators"""
+        
+    def validate_output(self, response: str, original_input: str) -> ValidationResult:
+        """Validate AI response"""
+```
+
+### Support Classes
+```python
+class RefusalGenerator:
+    """Generates compassionate refusal messages"""
+    
+    def generate(self, result: ValidationResult) -> str:
+        """Create refusal message based on violation type"""
+```
+```python
+class SystemPromptGenerator:
+    """Creates Ahimsa system prompts for AI models"""
+    
+    @staticmethod
+    def generate(custom_additions: str = None) -> str:
+        """Generate complete system prompt"""
+```
+
+### Main Class
+```python
+class AhimsaAI:
+    """
+    Main public interface for the framework.
+    
+    Usage:
+        ahimsa = AhimsaAI()
+        result = ahimsa.process_request("user input")
+    """
+    
+    def __init__(
+        self,
+        enable_semantic: bool = True,
+        enable_external_api: bool = False,
+        enable_llm_judge: bool = False,
+        ...
+    ):
+        """Configure which validation layers to use"""
+    
+    def process_request(
+        self,
+        user_input: str,
+        model_response: str = None
+    ) -> Dict[str, Any]:
+        """
+        Main entry point.
+        
+        Returns:
+            {
+                'status': 'accepted' | 'rejected',
+                'reason': 'input_violation' | 'response_violation' | None,
+                'response': str,  # AI response or refusal message
+                'validation_result': {...},
+                'system_prompt': str
+            }
+        """
+    
+    def get_system_prompt(self) -> str:
+        """Get the Ahimsa system prompt"""
+    
+    def add_harmful_example(self, category: str, example: str):
+        """Add new example for semantic matching"""
+```
+
+---
+
+## Integrations
+
+### Anthropic Integration (`anthropic_integration.py`)
+```python
+class AhimsaClaude:
+    """
+    Wrapper for Anthropic Claude API.
+    
+    Methods:
+        create_message() - Full response with metadata
+        chat() - Simple string response
+        add_harmful_example() - Learning from feedback
+    """
+
+class AhimsaClaudeConversation:
+    """
+    Multi-turn conversation manager.
+    
+    Methods:
+        send() - Send message, get response
+        reset() - Clear history
+        get_history() - Get conversation history
+    """
+```
+
+### OpenAI Integration (`openai_integration.py`)
+```python
+class AhimsaOpenAI:
+    """
+    Wrapper for OpenAI API.
+    
+    Methods:
+        create_message() - Full response with metadata
+        chat() - Simple string response
+        moderate() - Direct moderation API access
+        add_harmful_example() - Learning from feedback
+    """
+
+class AhimsaOpenAIConversation:
+    """Multi-turn conversation manager"""
+
+class AhimsaOpenAIStreaming:
+    """Streaming response support"""
+```
+
+---
+
+## Data Flow
+
+### Request Processing Flow
+```
+User Input
+    │
+    ▼
+┌───────────────────────────────────────────┐
+│           AhimsaAI.process_request()      │
+└───────────────────────────────────────────┘
+    │
+    ▼
+┌───────────────────────────────────────────┐
+│      AhimsaValidationPipeline             │
+│                                           │
+│  ┌─────────────────────────────────────┐  │
+│  │ Layer 1: KeywordValidator           │  │
+│  │ - Check harmful patterns            │  │
+│  │ - Check safe contexts               │  │
+│  └─────────────────────────────────────┘  │
+│                    │                      │
+│                    ▼                      │
+│  ┌─────────────────────────────────────┐  │
+│  │ Layer 2: SemanticValidator          │  │
+│  │ - Compute text embedding            │  │
+│  │ - Compare to harmful examples       │  │
+│  └─────────────────────────────────────┘  │
+│                    │                      │
+│                    ▼                      │
+│  ┌─────────────────────────────────────┐  │
+│  │ Layer 3: ExternalModerationValidator│  │
+│  │ - Call OpenAI moderation API        │  │
+│  └─────────────────────────────────────┘  │
+│                    │                      │
+│                    ▼                      │
+│  ┌─────────────────────────────────────┐  │
+│  │ Layer 4: LLMJudgeValidator          │  │
+│  │ - Ask LLM to evaluate               │  │
+│  └─────────────────────────────────────┘  │
+│                                           │
+└───────────────────────────────────────────┘
+    │
+    ▼
+┌───────────────────────────────────────────┐
+│           ValidationResult                │
+│  - is_valid: bool                         │
+│  - violations: List[AhimsaViolation]      │
+│  - request_id, timestamp, etc.            │
+└───────────────────────────────────────────┘
+    │
+    ├─── If INVALID ──► RefusalGenerator.generate()
+    │                         │
+    │                         ▼
+    │                   Compassionate Refusal
+    │
+    └─── If VALID ────► Return with System Prompt
+                              │
+                              ▼
+                        Ready for AI Model
+```
+
+### Integration Flow
+```
+User
+  │
+  ▼
+┌─────────────────────┐
+│   AhimsaClaude /    │
+│   AhimsaOpenAI      │
+└─────────────────────┘
+  │
+  ├── 1. Validate input (AhimsaAI)
+  │         │
+  │         ├── REJECTED → Return refusal
+  │         │
+  │         └── ACCEPTED → Continue
+  │
+  ├── 2. Call AI API with system prompt
+  │
+  ├── 3. Validate output (AhimsaAI)
+  │         │
+  │         ├── REJECTED → Return refusal
+  │         │
+  │         └── ACCEPTED → Continue
+  │
+  └── 4. Return response
+          │
+          ▼
+        User
+```
+
+---
+
+## Configuration Matrix
+
+| Feature | Param | Default | Requires |
+|---------|-------|---------|----------|
+| Keyword validation | Always on | - | Nothing |
+| Semantic validation | `enable_semantic` | `True` | sentence-transformers |
+| External API | `enable_external_api` | `False` | openai, OPENAI_API_KEY |
+| LLM Judge | `enable_llm_judge` | `False` | anthropic/openai, API key |
+| Custom prompt | `custom_system_prompt_additions` | `None` | Nothing |
+
+---
+
+## File Dependencies
+```
+ahimsa_ai_framework.py
+    └── (no internal dependencies)
+
+anthropic_integration.py
+    └── ahimsa_ai_framework.py
+
+openai_integration.py
+    └── ahimsa_ai_framework.py
+
+test_ahimsa_framework.py
+    └── ahimsa_ai_framework.py
+```
+
+---
+
+## External Dependencies
+
+### Required (for full features)
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| sentence-transformers | >=2.2.0 | Semantic similarity |
+| scikit-learn | >=1.0.0 | Cosine similarity |
+| numpy | >=1.21.0 | Numerical operations |
+| torch | >=2.0.0 | ML backend |
+
+### Optional
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| anthropic | >=0.18.0 | Claude integration |
+| openai | >=1.0.0 | GPT integration |
+| pytest | >=7.0.0 | Testing |
+
+---
+
+## Performance Characteristics
+
+| Component | Latency | Memory | CPU |
+|-----------|---------|--------|-----|
+| KeywordValidator | ~1ms | Low | Low |
+| SemanticValidator (init) | ~5s | ~500MB | High |
+| SemanticValidator (inference) | ~50-100ms | - | Medium |
+| ExternalModerationValidator | ~200-500ms | Low | Low |
+| LLMJudgeValidator | ~1-3s | Low | Low |
+
+---
+
+## Extending the Framework
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+
+- Adding new validation patterns
+- Creating new validators
+- Writing tests
+- Submitting pull requests
