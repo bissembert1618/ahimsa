@@ -1,17 +1,65 @@
-# Core framework has no external dependencies
-# Uses only Python standard library
+# =============================================================================
+# Ahimsa AI Framework v2.0 - Dependencies
+# =============================================================================
 
-# Optional dependencies for AI model integrations:
+# -----------------------------------------------------------------------------
+# CORE (Required)
+# -----------------------------------------------------------------------------
+# No external dependencies for basic keyword validation
+# Python 3.8+ standard library only
 
-# For OpenAI integration (optional)
-# openai>=1.0.0
+# -----------------------------------------------------------------------------
+# SEMANTIC VALIDATION (Optional but Recommended)
+# -----------------------------------------------------------------------------
+# Enable with: AhimsaAI(enable_semantic=True)
+# These provide ML-based semantic similarity detection
 
-# For Anthropic Claude integration (optional)
-# anthropic>=0.18.0
+sentence-transformers>=2.2.0
+scikit-learn>=1.0.0
+numpy>=1.21.0
+torch>=2.0.0
 
-# For development and testing (optional)
-# pytest>=7.0.0
-# pytest-cov>=4.0.0
-# black>=23.0.0
-# flake8>=6.0.0
-# mypy>=1.0.0
+# -----------------------------------------------------------------------------
+# ANTHROPIC INTEGRATION (Optional)
+# -----------------------------------------------------------------------------
+# Required for: anthropic_integration.py
+# Required for: LLM-as-a-judge with Claude
+
+anthropic>=0.18.0
+
+# -----------------------------------------------------------------------------
+# OPENAI INTEGRATION (Optional)
+# -----------------------------------------------------------------------------
+# Required for: openai_integration.py
+# Required for: External moderation API
+# Required for: LLM-as-a-judge with GPT
+
+openai>=1.0.0
+
+# -----------------------------------------------------------------------------
+# DEVELOPMENT & TESTING (Optional)
+# -----------------------------------------------------------------------------
+# Required for: Running test suite
+
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-asyncio>=0.21.0
+
+# -----------------------------------------------------------------------------
+# OPTIONAL ENHANCEMENTS
+# -----------------------------------------------------------------------------
+# For faster inference on CPU
+# onnxruntime>=1.15.0
+
+# For async support
+# aiohttp>=3.8.0
+
+# For configuration file support
+# pyyaml>=6.0
+# python-dotenv>=1.0.0
+
+# For detailed logging
+# structlog>=23.0.0
+
+# For API rate limiting
+# ratelimit>=2.2.1
