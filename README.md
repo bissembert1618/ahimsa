@@ -425,7 +425,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Documentation
 
-- [Research Paper (PDF)](docs/Ahimsa_AI_Framework_Paper.pdf)
+- [Research Paper (PDF)](https://github.com/bissembert1618/ahimsa/blob/main/ahimsa_scientific_paper)
 - [Project on OSF](https://osf.io/d7jsv/overview)
 
 ## Acknowledgments
