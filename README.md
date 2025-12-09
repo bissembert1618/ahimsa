@@ -423,6 +423,11 @@ pytest test_ahimsa_framework.py -v
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Documentation
+
+- [Research Paper (PDF)](docs/Ahimsa_AI_Framework_Paper.pdf)
+- [Project on OSF](https://osf.io/d7jsv/overview)
+
 ## Acknowledgments
 
 - Mahatma Gandhi for the principle of Ahimsa
