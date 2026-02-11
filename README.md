@@ -1,10 +1,20 @@
-# Ahimsa AI Framework v2.0
+# Ahimsa AI Framework v2.1
 
 A production-ready Python framework that implements Mahatma Gandhi's principle of **Ahimsa (non-violence)** for AI systems. This framework provides multi-layered validation to ensure AI models operate with compassion, truthfulness, and respect for all beings.
 
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Version](https://img.shields.io/badge/version-2.0.0-orange.svg)
+![Version](https://img.shields.io/badge/version-2.1.0-orange.svg)
+
+## 🎮 Live Demo
+
+**[Try the interactive demo →](https://bissembert1618.github.io/ahimsa/demo.html)**
+
+Type any text and watch it flow through all four validation layers in real time — no installation or API keys needed. The demo simulates the full pipeline with the framework's actual regex patterns, semantic similarity scoring, and compassionate refusal messages.
+
+## What's New in v2.1
+
+- **Interactive browser demo** — Self-contained HTML page that simulates the full 4-layer pipeline. Animated visualization, pre-loaded examples, and a JSON audit log. [Try it live](https://bissembert1618.github.io/ahimsa/demo.html) or open `demo.html` locally.
 
 ## What's New in v2.0
 
@@ -316,6 +326,15 @@ python test_ahimsa_framework.py
 ```
 
 ### Run Demo
+
+#### Interactive Browser Demo (no dependencies)
+```bash
+# Open the HTML demo in your browser
+open demo.html
+# Or visit the live version: https://bissembert1618.github.io/ahimsa/demo.html
+```
+
+#### Python Demo
 ```bash
 # Framework demo
 python ahimsa_ai_framework.py
@@ -410,6 +429,7 @@ pytest test_ahimsa_framework.py -v
 
 ## Roadmap
 
+- [x] Interactive browser demo (v2.1)
 - [ ] Fine-tuned classifier for better accuracy
 - [ ] Adversarial testing suite
 - [ ] Web API endpoint

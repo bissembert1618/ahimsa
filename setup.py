@@ -29,7 +29,7 @@ def read_readme():
     return "Ahimsa AI Framework - Implementing Gandhi's Principle of Non-Violence in AI Systems"
 
 # Read version from package
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 
 # Core package info
 setup(

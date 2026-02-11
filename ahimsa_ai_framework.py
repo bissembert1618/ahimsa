@@ -1,5 +1,5 @@
 """
-Ahimsa AI Framework v2.0 - Production-Ready Implementation
+Ahimsa AI Framework v2.1 - Production-Ready Implementation
 Implementing Gandhi's Principle of Non-Violence in AI Systems
 
 This module provides a multi-layered defense system combining:

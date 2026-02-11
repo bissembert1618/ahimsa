@@ -5,6 +5,28 @@ All notable changes to the Ahimsa AI Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.1.0 - 2026-02-11
+
+### Added
+
+#### Interactive Browser Demo
+- **`demo.html`** — Self-contained HTML page that simulates the full 4-layer validation pipeline
+  - Real regex patterns ported from the Python framework (keyword detection + safe context filtering)
+  - Simulated semantic similarity scoring against ~60 reference harmful examples
+  - Simulated OpenAI moderation API with category-level flagging
+  - Simulated LLM-as-a-Judge evaluation with Ahimsa-principled reasoning
+  - Animated pipeline visualization with realistic per-layer timing
+  - 15 pre-loaded example inputs across three categories (blocked, safe context, edge cases)
+  - Compassionate refusal message generation
+  - Collapsible JSON audit log for each validation run
+  - Zero dependencies — works in any browser, no server or API keys needed
+  - Live version hosted via GitHub Pages
+
+#### GitHub Pages
+- Demo is now playable at `https://bissembert1618.github.io/ahimsa/demo.html`
+
+---
+
 ## 2.0.0 - 2025-12-08
 
 ### Added
@@ -110,6 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Release Date | Highlights |
 |---------|--------------|------------|
+| 2.1.0 | 2026-02-11 | Interactive browser demo, GitHub Pages |
 | 2.0.0 | 2025-12-08 | Multi-layer pipeline, semantic validation, production-ready |
 | 1.0.0 | 2025-12-02 | Initial release, basic regex validation |
 
@@ -204,7 +227,7 @@ pytest test_ahimsa_framework.py -v
 
 ## Future Releases
 
-### Planned for v2.1.0
+### Planned for v2.2.0 (moved from v2.1.0)
 - Configuration file support (YAML)
 - Rate limiting
 - Caching for repeated requests
