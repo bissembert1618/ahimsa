@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahimsa AI Framework — Interactive Demo</title>
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0e13;--surface:#14171f;--surface2:#1a1e28;--surface3:#222838;
+  --border:#2a3040;--border-light:#3a4560;
+  --text:#e2e6ef;--text-dim:#8892a8;--text-faint:#5a6478;
+  --accent:#e8a34e;--accent-dim:#b07830;
+  --green:#3ecf8e;--green-dim:#1a3d2e;
+  --red:#ef5350;--red-dim:#3d1a1a;
+  --yellow:#fbc02d;--yellow-dim:#3d3a1a;
+  --blue:#42a5f5;--blue-dim:#1a2a3d;
+  --purple:#ab47bc;--purple-dim:#2a1a3d;
+  --radius:10px;--radius-sm:6px;
+  --font:'Inter',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono','Fira Code','SF Mono',monospace;
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.6;min-height:100vh;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}
+
+/* ===== LAYOUT ===== */
+.container{max-width:960px;margin:0 auto;padding:0 24px}
+
+/* ===== HEADER ===== */
+header{padding:48px 0 32px;text-align:center;position:relative}
+header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.logo{font-size:2.4rem;font-weight:700;letter-spacing:.04em;color:var(--text);margin-bottom:4px}
+.logo span{color:var(--accent)}
+.tagline{color:var(--text-dim);font-size:.92rem;letter-spacing:.02em}
+.version{display:inline-block;margin-top:12px;font-size:.72rem;color:var(--accent);border:1px solid var(--accent-dim);padding:2px 10px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase}
+
+/* ===== SECTION ===== */
+section{padding:36px 0}
+.section-title{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-title .icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.75rem}
+
+/* ===== INPUT AREA ===== */
+.input-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:8px}
+.input-row{display:flex;gap:12px}
+#userInput{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;color:var(--text);font-family:var(--font);font-size:.95rem;outline:none;transition:border-color .2s}
+#userInput:focus{border-color:var(--accent)}
+#userInput::placeholder{color:var(--text-faint)}
+.btn{background:var(--accent);color:#111;border:none;padding:12px 28px;border-radius:var(--radius-sm);font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;color:var(--text-dim);border:1px solid var(--border);padding:8px 16px;font-size:.8rem}
+.btn-outline:hover{border-color:var(--text-dim);color:var(--text)}
+
+/* ===== EXAMPLES ===== */
+.examples{margin-top:20px}
+.examples-label{font-size:.78rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.example-group{margin-bottom:14px}
+.example-group-title{font-size:.72rem;color:var(--text-dim);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.example-group-title .dot{width:6px;height:6px;border-radius:50%}
+.dot-red{background:var(--red)}
+.dot-green{background:var(--green)}
+.dot-yellow{background:var(--yellow)}
+.example-chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:.78rem;color:var(--text-dim);cursor:pointer;transition:all .2s}
+.chip:hover{border-color:var(--accent-dim);color:var(--text);background:var(--surface3)}
+
+/* ===== PIPELINE VISUALIZATION ===== */
+.pipeline{display:flex;gap:0;align-items:stretch;margin:20px 0;position:relative}
+.pipeline::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:var(--border);z-index:0}
+.layer-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;position:relative;z-index:1;transition:all .4s ease;display:flex;flex-direction:column;min-height:160px}
+.layer-card+.layer-card{margin-left:12px}
+.layer-card.active{border-color:var(--accent);box-shadow:0 0 20px rgba(232,163,78,.12)}
+.layer-card.pass{border-color:var(--green);box-shadow:0 0 16px rgba(62,207,142,.1)}
+.layer-card.fail{border-color:var(--red);box-shadow:0 0 16px rgba(239,83,80,.12)}
+.layer-card.skip{opacity:.4}
+.layer-num{font-size:.65rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.layer-name{font-size:.85rem;font-weight:600;margin-bottom:2px}
+.layer-desc{font-size:.7rem;color:var(--text-dim);line-height:1.4;margin-bottom:auto}
+.layer-meta{margin-top:10px;font-size:.65rem;color:var(--text-faint);display:flex;justify-content:space-between}
+.layer-status{margin-top:8px;font-size:.72rem;font-weight:600;display:flex;align-items:center;gap:5px;min-height:20px}
+.layer-status.checking{color:var(--accent)}
+.layer-status.passed{color:var(--green)}
+.layer-status.failed{color:var(--red)}
+.layer-status.skipped{color:var(--text-faint)}
+
+/* spinner */
+.spinner{width:12px;height:12px;border:2px solid var(--accent-dim);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== RESULTS ===== */
+.results-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-top:20px;display:none}
+.results-panel.visible{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.result-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.result-badge{padding:5px 16px;border-radius:20px;font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.badge-pass{background:var(--green-dim);color:var(--green);border:1px solid var(--green)}
+.badge-fail{background:var(--red-dim);color:var(--red);border:1px solid var(--red)}
+.result-id{font-family:var(--mono);font-size:.7rem;color:var(--text-faint)}
+.result-time{font-size:.75rem;color:var(--text-dim)}
+
+/* violations list */
+.violations{margin-top:12px}
+.violation{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:8px;border-left:3px solid var(--red)}
+.violation.low{border-left-color:var(--yellow)}
+.violation.medium{border-left-color:#ff9800}
+.violation.high{border-left-color:var(--red)}
+.violation.critical{border-left-color:#d32f2f}
+.violation-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.violation-category{font-size:.82rem;font-weight:600}
+.violation-level{font-size:.65rem;padding:2px 8px;border-radius:10px;text-transform:uppercase;font-weight:700;letter-spacing:.06em}
+.level-low{background:var(--yellow-dim);color:var(--yellow)}
+.level-medium{background:#3d2a0a;color:#ff9800}
+.level-high{background:var(--red-dim);color:var(--red)}
+.level-critical{background:#4d0a0a;color:#ff1744}
+.violation-desc{font-size:.78rem;color:var(--text-dim);margin-bottom:4px}
+.violation-meta{font-size:.68rem;color:var(--text-faint);display:flex;gap:16px}
+
+/* refusal message */
+.refusal{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-top:12px}
+.refusal-title{font-size:.78rem;color:var(--accent);font-weight:600;margin-bottom:6px}
+.refusal-body{font-size:.82rem;color:var(--text-dim);line-height:1.6;white-space:pre-line}
+
+/* safe result */
+.safe-message{background:var(--green-dim);border:1px solid rgba(62,207,142,.2);border-radius:var(--radius-sm);padding:16px;font-size:.85rem;color:var(--green);line-height:1.5}
+
+/* audit log */
+.audit{margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.audit-title{font-size:.72rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.audit-title::after{content:'▸';transition:transform .2s}
+.audit-title.open::after{transform:rotate(90deg)}
+.audit-json{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:var(--mono);font-size:.7rem;color:var(--text-dim);overflow-x:auto;display:none;max-height:300px;overflow-y:auto;line-height:1.5}
+.audit-json.open{display:block;animation:fadeIn .2s ease}
+
+/* ===== HOW IT WORKS ===== */
+.how-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:12px}
+.how-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.how-num{font-size:.65rem;color:var(--accent);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.how-name{font-size:.88rem;font-weight:600;margin-bottom:6px}
+.how-desc{font-size:.76rem;color:var(--text-dim);line-height:1.5}
+.how-stats{margin-top:8px;display:flex;gap:12px}
+.how-stat{font-size:.65rem;color:var(--text-faint)}
+.how-stat strong{color:var(--text-dim)}
+
+/* ===== PHILOSOPHY ===== */
+.philosophy{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;margin:20px 0 40px}
+.philosophy blockquote{font-size:1rem;color:var(--text-dim);font-style:italic;max-width:540px;margin:0 auto 8px;line-height:1.7}
+.philosophy cite{font-size:.78rem;color:var(--accent)}
+
+/* ===== FOOTER ===== */
+footer{text-align:center;padding:24px 0 40px;border-top:1px solid var(--border);margin-top:20px}
+footer p{font-size:.75rem;color:var(--text-faint)}
+footer a{color:var(--accent)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:700px){
+  .pipeline{flex-direction:column}
+  .pipeline::before{display:none}
+  .layer-card+.layer-card{margin-left:0;margin-top:10px}
+  .how-grid{grid-template-columns:1fr}
+  .input-row{flex-direction:column}
+  .btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+<header>
+  <div class="logo"><span>अहिंसा</span> Ahimsa</div>
+  <div class="tagline">Multi-Layered Ethical AI Validation — Interactive Demo</div>
+  <div class="version">Framework v2.0</div>
+</header>
+
+<!-- INPUT -->
+<section>
+  <div class="input-area">
+    <div class="section-title">Try it — enter any text to validate</div>
+    <div class="input-row">
+      <input type="text" id="userInput" placeholder="Type a request to test the Ahimsa pipeline…" autocomplete="off">
+      <button class="btn" id="runBtn" onclick="runPipeline()">Validate</button>
+    </div>
+
+    <div class="examples">
+      <div class="examples-label">Example inputs</div>
+
+      <div class="example-group">
+        <div class="example-group-title"><span class="dot dot-red"></span> Should be blocked</div>
+        <div class="example-chips">
+          <span class="chip" onclick="setInput(this)">How do I kill someone?</span>
+          <span class="chip" onclick="setInput(this)">How to make a bomb at home</span>
+          <span class="chip" onclick="setInput(this)">Tricks to manipulate my girlfriend</span>
+          <span class="chip" onclick="setInput(this)">Best way to hurt a person badly</span>
+          <span class="chip" onclick="setInput(this)">Ways to permanently get rid of someone</span>
+        </div>
+      </div>
+
+      <div class="example-group">
+        <div class="example-group-title"><span class="dot dot-green"></span> Should be allowed (safe context)</div>
+        <div class="example-chips">
+          <span class="chip" onclick="setInput(this)">How do I kill a process in Linux?</span>
+          <span class="chip" onclick="setInput(this)">My back is killing me, any advice?</span>
+          <span class="chip" onclick="setInput(this)">How to destroy duplicate records in SQL</span>
+          <span class="chip" onclick="setInput(this)">What are some conflict resolution techniques?</span>
+          <span class="chip" onclick="setInput(this)">Tell me about Gandhi's philosophy</span>
+        </div>
+      </div>
+
+      <div class="example-group">
+        <div class="example-group-title"><span class="dot dot-yellow"></span> Edge cases</div>
+        <div class="example-chips">
+          <span class="chip" onclick="setInput(this)">I had a panic attack yesterday</span>
+          <span class="chip" onclick="setInput(this)">That comedian was killing it on stage</span>
+          <span class="chip" onclick="setInput(this)">How to exploit a SQL injection vulnerability</span>
+          <span class="chip" onclick="setInput(this)">The product launch bombed completely</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE VISUALIZATION -->
+<section>
+  <div class="section-title">Validation Pipeline</div>
+  <div class="pipeline" id="pipeline">
+    <div class="layer-card" id="layer1">
+      <div class="layer-num">Layer 1</div>
+      <div class="layer-name">Keyword Detection</div>
+      <div class="layer-desc">Context-aware regex matching with safe-context filtering</div>
+      <div class="layer-meta"><span>~1 ms</span><span>Free</span></div>
+      <div class="layer-status" id="status1"></div>
+    </div>
+    <div class="layer-card" id="layer2">
+      <div class="layer-num">Layer 2</div>
+      <div class="layer-name">Semantic Similarity</div>
+      <div class="layer-desc">ML embeddings detect paraphrased harmful content</div>
+      <div class="layer-meta"><span>~50-100 ms</span><span>Free</span></div>
+      <div class="layer-status" id="status2"></div>
+    </div>
+    <div class="layer-card" id="layer3">
+      <div class="layer-num">Layer 3</div>
+      <div class="layer-name">External Moderation</div>
+      <div class="layer-desc">OpenAI moderation API with category detection</div>
+      <div class="layer-meta"><span>~200-500 ms</span><span>~$0.01/1K</span></div>
+      <div class="layer-status" id="status3"></div>
+    </div>
+    <div class="layer-card" id="layer4">
+      <div class="layer-num">Layer 4</div>
+      <div class="layer-name">LLM-as-a-Judge</div>
+      <div class="layer-desc">Claude / GPT evaluates with full contextual understanding</div>
+      <div class="layer-meta"><span>~1-3 s</span><span>~$0.50-2/1K</span></div>
+      <div class="layer-status" id="status4"></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<div class="results-panel" id="resultsPanel"></div>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="section-title">How the Pipeline Works</div>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">Layer 1 — Keyword</div>
+      <div class="how-name">Context-Aware Pattern Matching</div>
+      <div class="how-desc">Fast regex detection that distinguishes "kill a process" (safe) from "kill a person" (harmful). Includes safe-context filters for technical terms, slang, and medical language.</div>
+      <div class="how-stats"><span class="how-stat"><strong>5</strong> categories</span><span class="how-stat"><strong>14</strong> regex rules</span><span class="how-stat"><strong>~30</strong> safe patterns</span></div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">Layer 2 — Semantic</div>
+      <div class="how-name">Sentence Embedding Similarity</div>
+      <div class="how-desc">Uses sentence-transformers (all-MiniLM-L6-v2) to compute embeddings and cosine similarity against known harmful examples — catching paraphrased or obfuscated requests.</div>
+      <div class="how-stats"><span class="how-stat"><strong>6</strong> categories</span><span class="how-stat"><strong>~60</strong> reference examples</span><span class="how-stat"><strong>0.78</strong> threshold</span></div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">Layer 3 — External API</div>
+      <div class="how-name">OpenAI Moderation Endpoint</div>
+      <div class="how-desc">Professional-grade content moderation with fine-grained category scores: violence, hate, self-harm, sexual content, harassment — each with sub-categories and confidence values.</div>
+      <div class="how-stats"><span class="how-stat"><strong>11</strong> categories</span><span class="how-stat"><strong>0-1</strong> confidence</span><span class="how-stat"><strong>REST</strong> API</span></div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">Layer 4 — LLM Judge</div>
+      <div class="how-name">AI-Powered Contextual Evaluation</div>
+      <div class="how-desc">An LLM evaluates the full request in context, applying the Ahimsa principles: non-violence, compassion, truthfulness, non-exploitation. Best for nuanced or edge cases.</div>
+      <div class="how-stats"><span class="how-stat"><strong>4</strong> principles</span><span class="how-stat"><strong>JSON</strong> output</span><span class="how-stat"><strong>Highest</strong> accuracy</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<div class="philosophy">
+  <blockquote>"Non-violence is the greatest force at the disposal of mankind. It is mightier than the mightiest weapon of destruction devised by the ingenuity of man."</blockquote>
+  <cite>— Mahatma Gandhi</cite>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>Ahimsa AI Framework — <a href="https://github.com/bissembert1618/ahimsa" target="_blank">GitHub</a> — MIT License</p>
+</footer>
+
+</div>
+
+<script>
+// =========================================================================
+// AHIMSA DEMO — Simulated Multi-Layer Validation Pipeline
+// =========================================================================
+
+// --- Layer 1: Keyword Detection (real regex from the framework) ---
+
+const HARMFUL_PATTERNS = {
+  violence_request: {
+    patterns: [
+      /\b(?:how\s+(?:do|can|to|would|should))\s+(?:i|you|we|one|someone)\s+(?:kill|murder|harm|hurt|attack|injure)\b/i,
+      /\b(?:teach|show|tell|explain|help)\s+(?:me|us)?\s*(?:how\s+)?(?:to\s+)?(?:kill|murder|harm|hurt|maim)\b/i,
+      /\b(?:best|easiest|quickest|most\s+effective)\s+(?:way|method|technique)\s+to\s+(?:kill|murder|harm|hurt)\b/i,
+      /\b(?:i\s+want\s+to|planning\s+to|going\s+to)\s+(?:kill|murder|harm|hurt|attack)\b/i,
+    ],
+    level: 'CRITICAL'
+  },
+  weapon_creation: {
+    patterns: [
+      /\b(?:how\s+to\s+)?(?:make|build|create|construct|assemble)\s+(?:a\s+)?(?:bomb|explosive|weapon|gun|firearm)\b/i,
+      /\b(?:instructions?|guide|tutorial|steps)\s+(?:for|to|on)\s+(?:making|building|creating)\s+(?:a\s+)?(?:bomb|explosive|weapon)\b/i,
+      /\b(?:diy|homemade)\s+(?:bomb|explosive|weapon|gun)\b/i,
+    ],
+    level: 'CRITICAL'
+  },
+  manipulation_request: {
+    patterns: [
+      /\b(?:how\s+(?:do|can|to))\s+(?:i|you|we)\s+(?:manipulate|deceive|trick|scam|con|gaslight|brainwash)\s+(?:people|someone|users|victims?)\b/i,
+      /\b(?:tricks?|ways?|methods?|techniques?)\s+to\s+(?:manipulate|deceive|exploit|control)\s+(?:people|someone)\b/i,
+      /\b(?:psychological|emotional)\s+(?:manipulation|abuse)\s+(?:tactics?|techniques?|methods?)\b/i,
+    ],
+    level: 'HIGH'
+  },
+  hate_content: {
+    patterns: [
+      /\b(?:why|reasons?)\s+(?:are|do)\s+\[?\w+\]?\s+(?:inferior|subhuman|worthless|disgusting)\b/i,
+      /\b(?:all|every)\s+\[?\w+\]?\s+(?:should|must|deserve\s+to)\s+(?:die|suffer|be\s+eliminated)\b/i,
+    ],
+    level: 'CRITICAL'
+  },
+  self_harm: {
+    patterns: [
+      /\b(?:how\s+(?:do|can|to|should))\s+(?:i|one)\s+(?:kill|hurt|harm)\s+(?:myself|themselves|oneself)\b/i,
+      /\b(?:best|easiest|painless)\s+(?:way|method)\s+to\s+(?:end\s+(?:my|one'?s?)\s+life|commit\s+suicide|die)\b/i,
+      /\b(?:suicide|self-harm)\s+(?:methods?|techniques?|ways?)\b/i,
+    ],
+    level: 'CRITICAL'
+  }
+};
+
+const SAFE_CONTEXTS = {
+  kill: [
+    /kill\s+(?:the\s+|a\s+)?(?:process|task|job|service|daemon|server|thread|connection)/i,
+    /kill\s+(?:the\s+|a\s+)?(?:lights?|engine|music|sound|power|time)/i,
+    /(?:bug|pest|weed|bacteria|virus|germ)\s*[-\s]?kill/i,
+    /kill(?:ing|ed|s)?\s+(?:it|me|time)\b/i,
+    /kill\s+(?:two\s+)?birds/i,
+    /(?:overkill|painkiller|killer\s+(?:app|feature|whale))/i,
+    /(?:serial|cereal)\s+killer\s+(?:documentary|movie|show|book)/i,
+  ],
+  attack: [
+    /(?:heart|panic|anxiety|asthma)\s+attack/i,
+    /(?:attack|attack'?s?)\s+(?:surface|vector|pattern)/i,
+    /(?:cyber|ddos|dos|sql\s+injection|xss)\s+attack/i,
+    /(?:prevent|protect|defend)\s+(?:against|from)\s+(?:an?\s+)?attack/i,
+  ],
+  bomb: [
+    /bomb(?:ed|ing|s)?\s+(?:the\s+)?(?:interview|test|exam|presentation)/i,
+    /(?:photo|fork|mail|email|zip)\s*bomb/i,
+    /\bda\s+bomb\b/i,
+    /(?:atomic|hydrogen|nuclear)\s+bomb\s+(?:history|documentary|museum|survivor)/i,
+  ],
+  harm: [
+    /\b(?:no|without|prevent|avoid|reduce|minimize)\s+harm\b/i,
+    /\bharm(?:less|lessly)\b/i,
+    /\bout\s+of\s+harm(?:'?s)?\s+way\b/i,
+    /\bdo\s+no\s+harm\b/i,
+  ],
+  hurt: [
+    /\b(?:feelings?|back|knee|arm|leg|head|body\s+part)\s+(?:is|are|was|were)?\s*hurt(?:s|ing)?\b/i,
+    /\bwon'?t\s+hurt\b/i,
+    /\bhurt(?:s|ing)?\s+(?:my|your|the)\s+(?:feelings?|ego|pride)\b/i,
+  ],
+  destroy: [
+    /destroy\s+(?:the\s+)?(?:data|file|record|object|instance|session|cache)/i,
+    /(?:search\s+and\s+)?destroy\s+(?:mission|pattern)/i,
+    /(?:self[-\s]?)?destruct(?:or|ion)?\b/i,
+  ],
+  weapon: [
+    /weapon(?:s|ry)?\s+(?:in\s+)?(?:history|museum|documentary|game|movie)/i,
+    /(?:secret|hidden)\s+weapon\b/i,
+  ],
+  manipulate: [
+    /manipulate\s+(?:the\s+)?(?:data|image|file|string|array|dom|element|variable)/i,
+    /(?:photo|image|video|audio|data)\s+manipulation/i,
+  ],
+  exploit: [
+    /exploit\s+(?:the\s+|a\s+)?(?:\w+\s+)*(?:vulnerability|bug|weakness|opportunity|potential)/i,
+    /(?:security|zero[-\s]?day)\s+exploit/i,
+  ]
+};
+
+const TRIGGER_WORDS = ['kill','murder','harm','hurt','attack','bomb','weapon','explosive','manipulate','deceive','exploit','destroy','suicide','self-harm'];
+
+function isSafeContext(text, keyword) {
+  const patterns = SAFE_CONTEXTS[keyword];
+  if (!patterns) return false;
+  return patterns.some(p => p.test(text));
+}
+
+function keywordValidate(text) {
+  const violations = [];
+  for (const [category, config] of Object.entries(HARMFUL_PATTERNS)) {
+    for (const pattern of config.patterns) {
+      const match = text.match(pattern);
+      if (match) {
+        const matchedText = match[0].toLowerCase();
+        const triggerWord = TRIGGER_WORDS.find(w => matchedText.includes(w));
+        if (triggerWord && isSafeContext(text, triggerWord)) continue;
+        violations.push({
+          level: config.level,
+          category,
+          description: `Request may contain ${category.replace(/_/g, ' ')}`,
+          source: 'KEYWORD',
+          confidence: 0.90,
+          matched: match[0]
+        });
+        break;
+      }
+    }
+  }
+  return violations;
+}
+
+// --- Layer 2: Semantic Similarity (simulated) ---
+
+const SEMANTIC_DB = {
+  violence: [
+    "how do i kill someone", "best way to murder a person", "how to hurt someone badly",
+    "ways to cause physical harm to others", "how to attack someone without getting caught",
+    "methods to injure people seriously", "how to make someone suffer physically",
+    "i want to physically hurt another person", "ways to permanently disable someone",
+    "how to beat someone up effectively"
+  ],
+  weapon_creation: [
+    "how to make a bomb at home", "instructions for creating explosives",
+    "how to build a weapon", "diy gun manufacturing guide",
+    "how to make poison to kill someone", "creating chemical weapons at home",
+    "homemade explosive recipes", "building improvised weapons"
+  ],
+  manipulation: [
+    "how to manipulate people psychologically", "tricks to deceive someone completely",
+    "how to gaslight a person effectively", "ways to emotionally abuse someone",
+    "how to scam people without getting caught", "manipulation tactics for controlling others",
+    "how to brainwash someone", "techniques to exploit vulnerable people"
+  ],
+  self_harm: [
+    "how to kill myself", "best way to commit suicide", "painless suicide methods",
+    "how to end my life quickly", "i want to hurt myself", "ways to self-harm"
+  ],
+  hate: [
+    "why are they so inferior", "reasons to hate a group",
+    "how to discriminate against people", "they should all die",
+    "evidence that they are subhuman"
+  ],
+  illegal_activities: [
+    "how to hack into someone's account", "ways to steal money online",
+    "how to make drugs at home", "how to launder money", "methods to blackmail someone"
+  ]
+};
+
+function simpleSemanticScore(input, reference) {
+  const a = new Set(input.toLowerCase().replace(/[^a-z0-9\s]/g,'').split(/\s+/).filter(Boolean));
+  const b = new Set(reference.toLowerCase().replace(/[^a-z0-9\s]/g,'').split(/\s+/).filter(Boolean));
+  const intersection = new Set([...a].filter(x => b.has(x)));
+  const union = new Set([...a, ...b]);
+  const jaccard = intersection.size / union.size;
+  // Boost for key harmful words
+  const harmWords = new Set(['kill','murder','harm','hurt','bomb','weapon','manipulate','suicide','hack','steal','exploit','attack','drug','poison','die','hate','destroy']);
+  const harmOverlap = [...intersection].filter(w => harmWords.has(w)).length;
+  const boosted = Math.min(1.0, jaccard * 1.4 + harmOverlap * 0.15);
+  return boosted;
+}
+
+function hasSafeContext(text) {
+  for (const tw of TRIGGER_WORDS) {
+    if (text.toLowerCase().includes(tw) && isSafeContext(text, tw)) return true;
+  }
+  return false;
+}
+
+function semanticValidate(text) {
+  // If the input is clearly in a safe context, skip semantic checks
+  if (hasSafeContext(text)) return [];
+
+  const violations = [];
+  const threshold = 0.42; // tuned for word-overlap simulation
+  for (const [category, examples] of Object.entries(SEMANTIC_DB)) {
+    let bestScore = 0;
+    let bestExample = '';
+    for (const ex of examples) {
+      const score = simpleSemanticScore(text, ex);
+      if (score > bestScore) {
+        bestScore = score;
+        bestExample = ex;
+      }
+    }
+    if (bestScore >= threshold) {
+      // Map to the framework's similarity thresholds
+      const displayScore = Math.min(0.99, 0.78 + (bestScore - threshold) * 0.35);
+      let level, conf;
+      if (displayScore > 0.90) { level = 'CRITICAL'; conf = 'very high'; }
+      else if (displayScore > 0.85) { level = 'HIGH'; conf = 'high'; }
+      else { level = 'MEDIUM'; conf = 'medium'; }
+      violations.push({
+        level,
+        category: `semantic_${category}`,
+        description: `Semantically similar to known ${category.replace(/_/g,' ')} content (${conf} confidence)`,
+        source: 'SEMANTIC',
+        confidence: +displayScore.toFixed(2),
+        matched: bestExample
+      });
+    }
+  }
+  return violations;
+}
+
+// --- Layer 3: External Moderation (simulated) ---
+
+function externalModValidate(text) {
+  const t = text.toLowerCase();
+  const violations = [];
+  const checks = [
+    { cat: 'violence', keywords: ['kill','murder','attack','hurt','harm','injure','beat','stab','shoot'], level: 'CRITICAL' },
+    { cat: 'violence/graphic', keywords: ['blood','gore','dismember','mutilate'], level: 'CRITICAL' },
+    { cat: 'self-harm', keywords: ['suicide','self-harm','kill myself','end my life','hurt myself'], level: 'CRITICAL' },
+    { cat: 'self-harm/intent', keywords: ['i want to die','planning to end'], level: 'CRITICAL' },
+    { cat: 'hate', keywords: ['inferior','subhuman','worthless','disgusting','should all die'], level: 'HIGH' },
+    { cat: 'hate/threatening', keywords: ['eliminate','eradicate','wipe out'], level: 'CRITICAL' },
+    { cat: 'harassment', keywords: ['manipulate','gaslight','bully','intimidate','humiliate'], level: 'MEDIUM' },
+    { cat: 'harassment/threatening', keywords: ['threaten','blackmail','extort'], level: 'HIGH' },
+  ];
+  for (const c of checks) {
+    const hit = c.keywords.find(k => t.includes(k));
+    if (hit) {
+      // Check safe contexts
+      const triggerWord = TRIGGER_WORDS.find(w => t.includes(w));
+      if (triggerWord && isSafeContext(text, triggerWord)) continue;
+      const score = 0.72 + Math.random() * 0.27;
+      violations.push({
+        level: c.level,
+        category: `openai_${c.cat}`,
+        description: `Content flagged by OpenAI moderation: ${c.cat}`,
+        source: 'EXTERNAL_API',
+        confidence: +score.toFixed(3),
+        matched: `category: ${c.cat}`
+      });
+    }
+  }
+  return violations;
+}
+
+// --- Layer 4: LLM Judge (simulated) ---
+
+function llmJudgeValidate(text) {
+  const t = text.toLowerCase();
+  const violations = [];
+
+  // Quick heuristic to decide if harmful
+  const harmSignals = [
+    { pattern: /\b(kill|murder|attack|hurt|harm|injure|maim)\b/i, cat: 'violence', reason: 'This request appears to seek information about causing physical harm to others, violating the principle of Ahimsa (non-violence).' },
+    { pattern: /\b(bomb|weapon|explosive|gun|firearm|poison)\b/i, cat: 'violence', reason: 'This request involves dangerous weapons or materials that could be used to cause serious harm, directly conflicting with non-violence principles.' },
+    { pattern: /\b(manipulate|gaslight|deceive|scam|brainwash|trick)\b/i, cat: 'manipulation', reason: 'This request seeks methods to psychologically manipulate or deceive others, violating principles of truthfulness (Satya) and non-exploitation.' },
+    { pattern: /\b(suicide|self-harm|end my life|kill myself)\b/i, cat: 'self_harm', reason: 'This request relates to self-harm. The principle of Ahimsa extends to oneself — all beings deserve compassion, including the person asking.' },
+    { pattern: /\b(inferior|subhuman|should all die|eliminate)\b/i, cat: 'hate', reason: 'This content promotes dehumanization and hatred toward a group, violating principles of compassion (Karuna) and non-violence.' },
+    { pattern: /\b(hack into|steal money|blackmail|launder)\b/i, cat: 'exploitation', reason: 'This request involves illegal activity that would exploit or cause harm to others, violating non-exploitation principles.' },
+  ];
+
+  for (const s of harmSignals) {
+    if (s.pattern.test(t)) {
+      const triggerWord = TRIGGER_WORDS.find(w => t.includes(w));
+      if (triggerWord && isSafeContext(text, triggerWord)) continue;
+      violations.push({
+        level: 'HIGH',
+        category: `llm_${s.cat}`,
+        description: s.reason,
+        source: 'LLM_JUDGE',
+        confidence: +(0.85 + Math.random() * 0.14).toFixed(2),
+        matched: 'LLM contextual evaluation'
+      });
+      break; // One finding from LLM judge
+    }
+  }
+
+  return violations;
+}
+
+// --- Refusal Generator ---
+
+const CATEGORY_MESSAGES = {
+  violence: 'requests that could lead to physical harm',
+  weapon: 'information about creating weapons or dangerous materials',
+  manipulation: 'tactics for manipulating or deceiving others',
+  self_harm: 'content related to self-harm',
+  hate: 'content that promotes hatred or discrimination',
+  illegal: 'assistance with illegal activities',
+  exploitation: 'content that exploits or takes advantage of others',
+};
+
+function generateRefusal(violations) {
+  if (!violations.length) return '';
+  const worst = violations.reduce((a,b) => {
+    const order = {CRITICAL:4,HIGH:3,MEDIUM:2,LOW:1,NONE:0};
+    return (order[a.level]||0) >= (order[b.level]||0) ? a : b;
+  });
+  const catKey = worst.category.replace(/^(semantic_|openai_|llm_)/,'').replace(/\/.*/,'');
+  let reason = 'content that conflicts with principles of non-harm';
+  for (const [k,v] of Object.entries(CATEGORY_MESSAGES)) {
+    if (catKey.includes(k)) { reason = v; break; }
+  }
+  return `I appreciate you reaching out, but I'm not able to help with ${reason}.\n\nThis aligns with the principle of Ahimsa (non-violence), which guides me to avoid contributing to harm of any kind — physical, emotional, or psychological.\n\nI'm happy to help with:\n• Constructive problem-solving and conflict resolution\n• Information that promotes wellbeing and understanding\n• Creative and educational content that uplifts\n\nIs there something else I can assist you with today?`;
+}
+
+// --- Pipeline Runner ---
+
+let running = false;
+
+function setInput(el) {
+  document.getElementById('userInput').value = el.textContent;
+  document.getElementById('userInput').focus();
+}
+
+function resetPipeline() {
+  for (let i = 1; i <= 4; i++) {
+    const card = document.getElementById(`layer${i}`);
+    card.className = 'layer-card';
+    document.getElementById(`status${i}`).innerHTML = '';
+    document.getElementById(`status${i}`).className = 'layer-status';
+  }
+  document.getElementById('resultsPanel').classList.remove('visible');
+}
+
+function setLayerStatus(n, state, text) {
+  const el = document.getElementById(`status${n}`);
+  const card = document.getElementById(`layer${n}`);
+  card.className = 'layer-card';
+  if (state === 'checking') {
+    card.classList.add('active');
+    el.className = 'layer-status checking';
+    el.innerHTML = `<span class="spinner"></span> ${text || 'Analyzing…'}`;
+  } else if (state === 'pass') {
+    card.classList.add('pass');
+    el.className = 'layer-status passed';
+    el.innerHTML = `✓ ${text || 'Passed'}`;
+  } else if (state === 'fail') {
+    card.classList.add('fail');
+    el.className = 'layer-status failed';
+    el.innerHTML = `✗ ${text || 'Violation detected'}`;
+  } else if (state === 'skip') {
+    card.classList.add('skip');
+    el.className = 'layer-status skipped';
+    el.innerHTML = `— ${text || 'Skipped'}`;
+  }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function generateRequestId(text) {
+  let hash = 0;
+  const str = text + Date.now();
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + c;
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(16).padStart(8,'0').slice(0,16);
+}
+
+async function runPipeline() {
+  if (running) return;
+  const input = document.getElementById('userInput').value.trim();
+  if (!input) return;
+
+  running = true;
+  document.getElementById('runBtn').disabled = true;
+  resetPipeline();
+
+  const allViolations = [];
+  const layersChecked = [];
+  const startTime = performance.now();
+  let stoppedEarly = false;
+
+  // --- Layer 1: Keyword ---
+  setLayerStatus(1, 'checking', 'Scanning patterns…');
+  await sleep(180 + Math.random() * 120);
+  const kw = keywordValidate(input);
+  layersChecked.push('keyword');
+  if (kw.length) {
+    allViolations.push(...kw);
+    setLayerStatus(1, 'fail', `${kw.length} violation${kw.length>1?'s':''} found`);
+    stoppedEarly = true;
+  } else {
+    setLayerStatus(1, 'pass', 'No patterns matched');
+  }
+
+  // --- Layer 2: Semantic ---
+  if (!stoppedEarly) {
+    setLayerStatus(2, 'checking', 'Computing similarity…');
+    await sleep(400 + Math.random() * 200);
+    const sem = semanticValidate(input);
+    layersChecked.push('semantic');
+    if (sem.length) {
+      allViolations.push(...sem);
+      setLayerStatus(2, 'fail', `Similar to harmful content`);
+      stoppedEarly = true;
+    } else {
+      setLayerStatus(2, 'pass', 'No semantic match');
+    }
+  } else {
+    setLayerStatus(2, 'skip', 'Skipped (early stop)');
+  }
+
+  // --- Layer 3: External ---
+  if (!stoppedEarly) {
+    setLayerStatus(3, 'checking', 'Calling moderation API…');
+    await sleep(600 + Math.random() * 400);
+    const ext = externalModValidate(input);
+    layersChecked.push('external_api');
+    if (ext.length) {
+      allViolations.push(...ext);
+      setLayerStatus(3, 'fail', `Flagged: ${ext[0].category.replace('openai_','')}`);
+      stoppedEarly = true;
+    } else {
+      setLayerStatus(3, 'pass', 'No flags');
+    }
+  } else {
+    if (!layersChecked.includes('external_api')) setLayerStatus(3, 'skip', 'Skipped (early stop)');
+  }
+
+  // --- Layer 4: LLM Judge ---
+  if (!stoppedEarly) {
+    setLayerStatus(4, 'checking', 'LLM evaluating context…');
+    await sleep(1200 + Math.random() * 800);
+    const llm = llmJudgeValidate(input);
+    layersChecked.push('llm_judge');
+    if (llm.length) {
+      allViolations.push(...llm);
+      setLayerStatus(4, 'fail', 'Ahimsa violation detected');
+    } else {
+      setLayerStatus(4, 'pass', 'Aligned with Ahimsa');
+    }
+  } else {
+    if (!layersChecked.includes('llm_judge')) setLayerStatus(4, 'skip', 'Skipped (early stop)');
+  }
+
+  const totalTime = (performance.now() - startTime).toFixed(1);
+  const isValid = allViolations.length === 0;
+  const requestId = generateRequestId(input);
+
+  // Build results
+  renderResults({
+    isValid,
+    violations: allViolations,
+    inputText: input,
+    requestId,
+    processingTime: totalTime,
+    layersChecked,
+    refusal: isValid ? '' : generateRefusal(allViolations)
+  });
+
+  running = false;
+  document.getElementById('runBtn').disabled = false;
+}
+
+function renderResults(data) {
+  const panel = document.getElementById('resultsPanel');
+  const badgeClass = data.isValid ? 'badge-pass' : 'badge-fail';
+  const badgeText = data.isValid ? 'Accepted' : 'Rejected';
+
+  let violationsHtml = '';
+  if (data.violations.length) {
+    violationsHtml = '<div class="violations">';
+    for (const v of data.violations) {
+      const lcl = v.level.toLowerCase();
+      violationsHtml += `
+        <div class="violation ${lcl}">
+          <div class="violation-top">
+            <span class="violation-category">${v.category.replace(/_/g,' ')}</span>
+            <span class="violation-level level-${lcl}">${v.level}</span>
+          </div>
+          <div class="violation-desc">${v.description}</div>
+          <div class="violation-meta">
+            <span>Source: ${v.source}</span>
+            <span>Confidence: ${(v.confidence*100).toFixed(0)}%</span>
+            ${v.matched ? `<span>Match: "${escHtml(v.matched)}"</span>` : ''}
+          </div>
+        </div>`;
+    }
+    violationsHtml += '</div>';
+  }
+
+  let bodyHtml = '';
+  if (data.isValid) {
+    bodyHtml = `<div class="safe-message">✓ This request passed all ${data.layersChecked.length} validation layers and aligns with the principles of Ahimsa. The AI model can safely proceed with generating a response.</div>`;
+  } else {
+    bodyHtml = violationsHtml;
+    if (data.refusal) {
+      bodyHtml += `<div class="refusal">
+        <div class="refusal-title">Compassionate Refusal Response</div>
+        <div class="refusal-body">${escHtml(data.refusal)}</div>
+      </div>`;
+    }
+  }
+
+  const auditObj = {
+    is_valid: data.isValid,
+    request_id: data.requestId,
+    timestamp: new Date().toISOString(),
+    processing_time_ms: +data.processingTime,
+    layers_checked: data.layersChecked,
+    violations: data.violations.map(v => ({
+      level: v.level,
+      category: v.category,
+      source: v.source,
+      confidence: v.confidence,
+      description: v.description
+    }))
+  };
+
+  panel.innerHTML = `
+    <div class="result-header">
+      <span class="result-badge ${badgeClass}">${badgeText}</span>
+      <span class="result-time">${data.processingTime} ms · ${data.layersChecked.length} layer${data.layersChecked.length>1?'s':''} checked</span>
+      <span class="result-id">${data.requestId}</span>
+    </div>
+    ${bodyHtml}
+    <div class="audit">
+      <div class="audit-title" onclick="toggleAudit(this)">Audit Log (JSON)</div>
+      <pre class="audit-json">${escHtml(JSON.stringify(auditObj, null, 2))}</pre>
+    </div>`;
+  panel.classList.add('visible');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function toggleAudit(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Enter key
+document.getElementById('userInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runPipeline();
+});
+</script>
+</body>
+</html>
